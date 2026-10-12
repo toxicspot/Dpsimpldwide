@@ -9,7 +9,35 @@ updates:
     directory: "/javascript"
     schedule:
       interval: "weekly"
-  - package-ecosystem: bundler
+  
+  - package-ecosystem: "bundler"
+    version: 2
+registries:
+    ruby-github:
+    type: rubygems-server
+    url: https://rubygems.pkg.github.com/octocat/github_api
+    token: ${{secrets.MY_GITHUB_PERSONAL_TOKEN}}
+updates:
     directory: "/ruby"
+    directory: "/rubygems-server"
+  - package-ecosystem: "bundler"
+    directory: "/rubygems-server"
+    insecure-external-code-execution: allow
+    registries: "*"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+ allow:
+      # Allow both direct and indirect updates for all packages.
+      - dependency-type: "all"
+    ignore:
+      # Ignore XWiki dependencies. We have a separate process for updating them
+      - dependency-name: "org.xwiki.*"
+    open-pull-requests-limit: 15
+    allow:
+      - dependency-type: "production"
+        update-types:
+          - "version-update:semver-patch"
+      - dependency-type: "development"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
